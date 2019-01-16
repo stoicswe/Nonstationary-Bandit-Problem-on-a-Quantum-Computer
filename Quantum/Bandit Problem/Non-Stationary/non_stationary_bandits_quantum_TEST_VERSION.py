@@ -149,7 +149,7 @@ for interAtor in range(10):
     num_bandits = len(reward_distribution)      # The number of bandits must be same as reward distribution
     weights = circuit_output                    # Weights are calculated by the quantum neural network
     chosen_action = tf.argmax(weights)          # Choose an action, based on the weights
-    total_episodes = 10                      # Number of iterations
+    total_episodes = 10000                      # Number of iterations
     total_reward = np.zeros(num_bandits)        # Total rewards for each of the bandits
     random_action_factor = 0.1                  # The % of the time we randomly choose an action, not based on weights
 
@@ -230,38 +230,42 @@ for interAtor in range(10):
     
     # graph the rewards over time, so we can see the stochastic learning
     # and also record the data, for use later in data analysis tools
+
+    save_local = './Results/'
+    save_local_graphs = './Results/Graphs/'
+
     plt.plot(rewards0)
-    plt.savefig(str(testnum)+'bandit0_reward_.png')
+    plt.savefig(save_local_graphs + str(testnum)+'bandit0_reward_.png')
     plt.clf()
-    with open(str(testnum)+'bandit0_reward_.txt', 'w') as f:
+    with open(save_local + str(testnum)+'bandit0_reward_.txt', 'w') as f:
         for item in rewards0:
             f.write("%s\n" % item)
 
     plt.plot(rewards1)
-    plt.savefig(str(testnum)+'bandit1_reward_.png')
+    plt.savefig(save_local_graphs + str(testnum)+'bandit1_reward_.png')
     plt.clf()
-    with open(str(testnum)+'bandit1_reward_.txt', 'w') as f:
+    with open(save_local + str(testnum)+'bandit1_reward_.txt', 'w') as f:
         for item in rewards1:
             f.write("%s\n" % item)
 
     plt.plot(rewards2)
-    plt.savefig(str(testnum)+'bandit2_reward_.png')
+    plt.savefig(save_local_graphs + str(testnum)+'bandit2_reward_.png')
     plt.clf()
-    with open(str(testnum)+'bandit2_reward_.txt', 'w') as f:
+    with open(save_local + str(testnum)+'bandit2_reward_.txt', 'w') as f:
         for item in rewards2:
             f.write("%s\n" % item)
 
     plt.plot(rewards3)
-    plt.savefig(str(testnum)+'bandit3_reward_.png')
+    plt.savefig(save_local_graphs + str(testnum)+'bandit3_reward_.png')
     plt.clf()
-    with open(str(testnum)+'bandit3_reward_.txt', 'w') as f:
+    with open(save_local + str(testnum)+'bandit3_reward_.txt', 'w') as f:
         for item in rewards3:
             f.write("%s\n" % item)
 
     plt.plot(accuracy_scores)
-    plt.savefig(str(testnum)+'accuracy_QNN_.png')
+    plt.savefig(save_local_graphs + str(testnum)+'accuracy_QNN_.png')
     plt.clf()
-    with open(str(testnum)+'accuracy_QNN_.txt', 'w') as f:
+    with open(save_local + str(testnum)+'accuracy_QNN_.txt', 'w') as f:
         for item in accuracy_scores:
             f.write("%s\n" % item)
 
