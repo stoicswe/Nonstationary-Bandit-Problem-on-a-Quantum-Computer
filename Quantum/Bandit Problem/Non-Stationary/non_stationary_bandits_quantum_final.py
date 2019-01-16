@@ -192,7 +192,7 @@ while i < total_episodes:
     
     # every 100 iterations, print to the user
     if i % 100 == 0:
-        print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
+        print("Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
         print("Iteration: {0} Accuracy: {1}".format(i, round(np.mean(accuracy), 4)))
     rewards0.append(total_reward[0])
     rewards1.append(total_reward[1])
