@@ -214,7 +214,7 @@ for interAtor in range(10):
         if i % accuracy_update == 0:
             accuracy_scores.append((sum(accuracy) / accuracy_update))
             # reset accuracy count, so average is only every 50 counts
-            accuracy = []
+            # accuracy = []
         
         # when the network is 1part way through training, shuffle the reward distribution
         if i == swap_dist_test:
