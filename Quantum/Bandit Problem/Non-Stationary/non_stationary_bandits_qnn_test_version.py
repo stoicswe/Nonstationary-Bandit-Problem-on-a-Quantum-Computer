@@ -157,7 +157,7 @@ for interAtor in range(10):
         return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
 
     # Parameters for the project configuration
-    reward_distribution_original = [0.1, 0.5, 0.1, 0.3]
+    reward_distribution_original = [0.1, 0.5, 0.2, 0.2]
     reward_distribution = copy.deepcopy(reward_distribution_original)   # This is the reward distribution for the bandits
     num_bandits = len(reward_distribution)                              # The number of bandits must be same as reward distribution
     weights = circuit_output                                            # Weights are calculated by the quantum neural network
@@ -290,7 +290,7 @@ for interAtor in range(10):
     plt.plot(rewards3)
     plt.title(label="Rewards")
     plt.legend(['Bandit 1', 'Bandit 2', 'Bandit 3', 'Bandit 4'], loc='upper left')
-    plt.savefig(save_local_graphs + str(testnum)+'bandit0_reward_.png')
+    plt.savefig(save_local_graphs + str(testnum)+'bandits_rewards_.png')
     plt.clf()
     with open(save_local + str(testnum)+'bandit0_reward_.txt', 'w') as f:
         for item in rewards0:
