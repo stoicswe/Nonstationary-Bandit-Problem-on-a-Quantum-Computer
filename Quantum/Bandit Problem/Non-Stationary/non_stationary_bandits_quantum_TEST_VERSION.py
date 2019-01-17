@@ -81,6 +81,7 @@ for interAtor in range(10):
     print("Building the Quantum Circuit")
     with eng:
         # initialize the variables to learn
+        # phi o D o U2 o S o U1
         Dgate(X[0], 0.) | q[0]
         Dgate(X[0], 0.) | q[1]
         Dgate(X[0], 0.) | q[2]
@@ -215,9 +216,11 @@ for interAtor in range(10):
             reward_distribution[0] = a
         
         # every 100 iterations, print to the user
-        #if i % 200 == 0:
-        print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
-        print("Iteration: {0} Accuracy: {1}".format(i, round((sum(accuracy_scores)/len(accuracy_scores)), 4)))
+        if i % 200 == 0:
+            print("---------------------------------------------------------------------------------------------")
+            print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
+            print("Iteration: {0} Accuracy: {1}".format(i, round((sum(accuracy_scores)/len(accuracy_scores)), 4)))
+            print("Weights: {0}".format(ww))
 
         # reccord the results of the accuracy, for analysis later
         rewards0.append(total_reward[0])
