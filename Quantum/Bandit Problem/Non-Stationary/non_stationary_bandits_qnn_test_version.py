@@ -77,10 +77,10 @@ for interAtor in range(10):
     P2 = tf.Variable(0.1)
     P3 = tf.Variable(0.1)
     # cubic phase gate stuff
-    V0 = 0.1
-    V1 = 0.1
-    V2 = 0.1
-    V3 = 0.1
+    V0 = tf.Variable(0.1)
+    V1 = tf.Variable(0.1)
+    V2 = tf.Variable(0.1)
+    V3 = tf.Variable(0.1)
     # Initialize the parameter for input
     X = tf.placeholder(tf.float32, [1])
     print("Building the Quantum Circuit")
@@ -118,10 +118,10 @@ for interAtor in range(10):
         Sgate(S2) | q[2]
         Sgate(S3) | q[3]
         # Displacement Gates
-        Dgate(D0) | q[0]
-        Dgate(D1) | q[1]
-        Dgate(D2) | q[2]
-        Dgate(D3) | q[3]
+        #Dgate(D0) | q[0]
+        #Dgate(D1) | q[1]
+        #Dgate(D2) | q[2]
+        #Dgate(D3) | q[3]
         # Phase Gates
         Pgate(P0) | q[0]
         Pgate(P1) | q[1]
