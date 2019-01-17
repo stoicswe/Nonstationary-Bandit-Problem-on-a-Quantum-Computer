@@ -76,6 +76,10 @@ for interAtor in range(10):
     P1 = tf.Variable(0.1)
     P2 = tf.Variable(0.1)
     P3 = tf.Variable(0.1)
+    V0 = tf.Variable(0.1)
+    V1 = tf.Variable(0.1)
+    V2 = tf.Variable(0.1)
+    V3 = tf.Variable(0.1)
     # Initialize the parameter for input
     X = tf.placeholder(tf.float32, [1])
     print("Building the Quantum Circuit")
@@ -113,20 +117,20 @@ for interAtor in range(10):
         Sgate(S2) | q[2]
         Sgate(S3) | q[3]
         # Displacement Gates
-        #Dgate(D0) | q[0]
-        #Dgate(D1) | q[1]
-        #Dgate(D2) | q[2]
-        #Dgate(D3) | q[3]
+        Dgate(D0) | q[0]
+        Dgate(D1) | q[1]
+        Dgate(D2) | q[2]
+        Dgate(D3) | q[3]
         # Phase Gates
-        # Pgate(P0) | q[0]
-        # Pgate(P1) | q[1]
-        # Pgate(P2) | q[2]
-        # Pgate(P3) | q[3]
+        Pgate(P0) | q[0]
+        Pgate(P1) | q[1]
+        Pgate(P2) | q[2]
+        Pgate(P3) | q[3]
         # Cubic phase gates
-        Vgate(P0) | q[0]
-        Vgate(P1) | q[1]
-        Vgate(P2) | q[2]
-        Vgate(P3) | q[3]
+        Vgate(V0) | q[0]
+        Vgate(V1) | q[1]
+        Vgate(V2) | q[2]
+        Vgate(V3) | q[3]
     print("Initializing Quantum to Classical Conversions")
     state = eng.run('tf', cutoff_dim=10, eval=False)
     # pulling results from the QNN in the Fock state basis
