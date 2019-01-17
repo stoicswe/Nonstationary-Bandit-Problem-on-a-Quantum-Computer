@@ -228,7 +228,7 @@ for interAtor in range(10):
         if i % accuracy_update == 0:
             accuracy_scores.append((sum(accuracy) / len(accuracy)))
             # reset accuracy count, so average is only every 50 counts
-            # accuracy = []
+            accuracy = []
         
         # when the network is 1part way through training, shuffle the reward distribution
         if i == swap_dist_test:
@@ -244,7 +244,7 @@ for interAtor in range(10):
             print("---------------------------------------------------------------------------------------------")
             print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
             print("Iteration: {0} Accuracy: {1}".format(i, round((sum(accuracy_scores)/len(accuracy_scores)), 4)))
-            print("Bandit Counts: Bandit 1:{0} Bandit 2:{1} Bandit 3:{2} Bandit 4:{3}".format(b0_count, b1_count, b2_count, b3_count))
+            print("Bandit Counts: | {0} | {1} | {2} | {3} |".format(b0_count, b1_count, b2_count, b3_count))
             print("Weights: {0}".format(ww))
 
         # reccord the results of the accuracy, for analysis later
