@@ -5,6 +5,7 @@ import strawberryfields as sf
 import operator
 import warnings
 import random as rand
+import copy
 from strawberryfields.ops import *
 
 warnings.filterwarnings("ignore")
@@ -145,13 +146,17 @@ for interAtor in range(10):
         return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
 
     # Parameters for the project configuration
-    reward_distribution = [0.1, 0.5, 0.1, 0.3]  # This is the reward distribution for the bandits
-    num_bandits = len(reward_distribution)      # The number of bandits must be same as reward distribution
-    weights = circuit_output                    # Weights are calculated by the quantum neural network
-    chosen_action = tf.argmax(weights)          # Choose an action, based on the weights
-    total_episodes = 10000                      # Number of iterations
-    total_reward = np.zeros(num_bandits)        # Total rewards for each of the bandits
-    random_action_factor = 0.1                  # The % of the time we randomly choose an action, not based on weights
+    reward_distribution_original = [0.1, 0.5, 0.1, 0.3]
+    reward_distribution = copy.deepcopy(reward_distribution_original)   # This is the reward distribution for the bandits
+    num_bandits = len(reward_distribution)                              # The number of bandits must be same as reward distribution
+    weights = circuit_output                                            # Weights are calculated by the quantum neural network
+    chosen_action = tf.argmax(weights)                                  # Choose an action, based on the weights
+    total_episodes = 10000                                              # Number of iterations
+    swap_dist_test = int(total_episodes/2)                              # halfway through learning, swap two distributions and examine the change
+    total_reward = np.zeros(num_bandits)                                # Total rewards for each of the bandits
+    random_action_factor = 0.10                                         # The % of the time we randomly choose an action, not based on weights
+    accuracy_update = 100                                               # every 100 iterations, reccord the accuracy for past 100 iterations
+    print_update = 200                                                  # every 200 iterations, output to the user
 
     print("Setting up the Network...")
     print("Reward holder")
@@ -195,13 +200,13 @@ for interAtor in range(10):
             accuracy.append(0)
         
         # store the accuracy scores for later
-        if i % 50 == 0:
-            accuracy_scores.append(np.mean(accuracy))
+        if i % accuracy_update == 0:
+            accuracy_scores.append((sum(accuracy) / accuracy_update))
             # reset accuracy count, so average is only every 50 counts
             accuracy = []
         
         # when the network is 1/2 way through training, shuffle the reward distribution
-        if i == total_episodes/2:
+        if i == swap_dist_test:
             #rand.shuffle(reward_distribution) # randomly shuffle the distributon
             # swap the distribution so we can test the network
             a = reward_distribution[1]         
@@ -210,9 +215,9 @@ for interAtor in range(10):
             reward_distribution[0] = a
         
         # every 100 iterations, print to the user
-        if i % 100 == 0:
-            print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
-            print("Iteration: {0} Accuracy: {1}".format(i, round(np.mean(accuracy), 4)))
+        #if i % 200 == 0:
+        print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
+        print("Iteration: {0} Accuracy: {1}".format(i, round((sum(accuracy_scores)/len(accuracy_scores)), 4)))
 
         # reccord the results of the accuracy, for analysis later
         rewards0.append(total_reward[0])
@@ -223,12 +228,16 @@ for interAtor in range(10):
         temp_action = action
     
     # print the overall accuracy and make a prediction
-    print("Accuracy for this network: {0}".format(np.mean(accuracy[int(total_episodes/2)])))
+    print("Accuracy for this network: {0}".format(np.mean(accuracy_scores)))
     print( "The agent thinks bandit " + str(np.argmax(ww)+1) + " is the most promising....")
     if np.argmax(ww) == np.argmax(np.array(reward_distribution)):
         print( "...and it was right!")
     else:
         print( "...and it was wrong!")
+
+    # reset the distribution for the network for more accurate readings
+    reward_distribution = []
+    reward_distribution = copy.deepcopy(reward_distribution_original)
     
     # graph the rewards over time, so we can see the stochastic learning
     # and also record the data, for use later in data analysis tools
