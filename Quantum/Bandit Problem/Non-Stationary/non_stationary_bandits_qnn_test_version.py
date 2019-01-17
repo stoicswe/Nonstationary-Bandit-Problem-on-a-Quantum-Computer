@@ -212,7 +212,7 @@ for interAtor in range(10):
         
         # store the accuracy scores for later
         if i % accuracy_update == 0:
-            accuracy_scores.append((sum(accuracy) / accuracy_update))
+            accuracy_scores.append((sum(accuracy) / len(accuracy)))
             # reset accuracy count, so average is only every 50 counts
             # accuracy = []
         
