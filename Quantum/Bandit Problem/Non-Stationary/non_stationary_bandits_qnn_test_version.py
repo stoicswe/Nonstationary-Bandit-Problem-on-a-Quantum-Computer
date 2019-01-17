@@ -76,10 +76,11 @@ for interAtor in range(10):
     P1 = tf.Variable(0.1)
     P2 = tf.Variable(0.1)
     P3 = tf.Variable(0.1)
-    V0 = tf.Variable(0.1)
-    V1 = tf.Variable(0.1)
-    V2 = tf.Variable(0.1)
-    V3 = tf.Variable(0.1)
+    # cubic phase gate stuff
+    V0 = 0.1
+    V1 = 0.1
+    V2 = 0.1
+    V3 = 0.1
     # Initialize the parameter for input
     X = tf.placeholder(tf.float32, [1])
     print("Building the Quantum Circuit")
