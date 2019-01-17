@@ -158,7 +158,7 @@ for interAtor in range(10):
     weights = circuit_output                                            # Weights are calculated by the quantum neural network
     chosen_action = tf.argmax(weights)                                  # Choose an action, based on the weights
     total_episodes = 10000                                              # Number of iterations
-    swap_dist_test = int(total_episodes/2)                              # halfway through learning, swap two distributions and examine the change
+    swap_dist_test = int(total_episodes/4)                              # halfway through learning, swap two distributions and examine the change
     total_reward = np.zeros(num_bandits)                                # Total rewards for each of the bandits
     random_action_factor = 0.10                                         # The % of the time we randomly choose an action, not based on weights
     accuracy_update = 50                                                # every 100 iterations, reccord the accuracy for past 100 iterations
@@ -211,7 +211,7 @@ for interAtor in range(10):
             # reset accuracy count, so average is only every 50 counts
             accuracy = []
         
-        # when the network is 1/2 way through training, shuffle the reward distribution
+        # when the network is 1part way through training, shuffle the reward distribution
         if i == swap_dist_test:
             #rand.shuffle(reward_distribution) # randomly shuffle the distributon
             # swap the distribution so we can test the network
