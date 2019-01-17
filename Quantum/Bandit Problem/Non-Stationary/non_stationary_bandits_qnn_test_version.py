@@ -244,6 +244,7 @@ for interAtor in range(10):
             print("---------------------------------------------------------------------------------------------")
             print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
             print("Iteration: {0} Accuracy: {1}".format(i, round((sum(accuracy_scores)/len(accuracy_scores)), 4)))
+            print("Bandit Counts: Bandit 1:{0} Bandit 2:{1} Bandit 3:{2} Bandit 4:{3}".format(b0_count, b1_count, b2_count, b3_count))
             print("Weights: {0}".format(ww))
 
         # reccord the results of the accuracy, for analysis later
@@ -253,10 +254,17 @@ for interAtor in range(10):
         rewards3.append(total_reward[3])
         i+=1
         temp_action = action
-    
+
+    # calculate the percentage of guesses made by the neural network
+    b0_percent = round(b0_count / total_episodes, 4)
+    b1_percent = round(b1_count / total_episodes, 4)
+    b2_percent = round(b2_count / total_episodes, 4)
+    b3_percent = round(b3_count / total_episodes, 4)
     # print the overall accuracy and make a prediction
     print("Accuracy for this network: {0}".format(np.mean(accuracy_scores)))
-    print( "The agent thinks bandit " + str(np.argmax(ww)+1) + " is the most promising....")
+    print("Percentage of guesses during learning:")
+    print("Bandit 1:{0} Bandit 2:{1} Bandit 3:{2} Bandit 4:{3}".format(b0_percent, b1_percent, b2_percent, b3_percent))
+    print("The agent thinks bandit " + str(np.argmax(ww)+1) + " is the most promising....")
     if np.argmax(ww) == np.argmax(np.array(reward_distribution)):
         print( "...and it was right!")
     else:
@@ -265,6 +273,10 @@ for interAtor in range(10):
     # reset the distribution for the network for more accurate readings
     reward_distribution = []
     reward_distribution = copy.deepcopy(reward_distribution_original)
+    b0_count = 0
+    b1_count = 0
+    b2_count = 0
+    b3_count = 0
     
     # graph the rewards over time, so we can see the stochastic learning
     # and also record the data, for use later in data analysis tools
