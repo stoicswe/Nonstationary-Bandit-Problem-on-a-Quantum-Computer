@@ -161,7 +161,7 @@ for interAtor in range(10):
     swap_dist_test = int(total_episodes/2)                              # halfway through learning, swap two distributions and examine the change
     total_reward = np.zeros(num_bandits)                                # Total rewards for each of the bandits
     random_action_factor = 0.10                                         # The % of the time we randomly choose an action, not based on weights
-    accuracy_update = 100                                               # every 100 iterations, reccord the accuracy for past 100 iterations
+    accuracy_update = 50                                                # every 100 iterations, reccord the accuracy for past 100 iterations
     print_update = 200                                                  # every 200 iterations, output to the user
 
     print("Setting up the Network...")
