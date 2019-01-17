@@ -189,6 +189,10 @@ for interAtor in range(10):
     rewards3 = []
     accuracy = []
     accuracy_scores = []
+    b0_count = 0
+    b1_count = 0
+    b2_count = 0
+    b3_count = 0
     sess = tf.Session()
     sess.run(init)
     temp_action = 0 # In order to generate the weights from the QNN for the first iteration, this has to be set
@@ -205,10 +209,20 @@ for interAtor in range(10):
         _, resp, ww = sess.run([update, responsible_weight, weights], feed_dict={X: [action], reward_holder:[reward],action_holder:[action]})
         total_reward[action] += reward
         # measure the accuracy of the network
-        if np.argmax(ww) == optimal:
+        best_guess = np.argmax(ww)
+        if best_guess == np.argmax(reward_distribution):
             accuracy.append(1)
         else:
             accuracy.append(0)
+        # reccord individual guesses for each bandit
+        if best_guess == 0:
+            b0_count += 1
+        if best_guess == 1:
+            b1_count += 1
+        if best_guess == 2:
+            b2_count += 1
+        if best_guess == 3:
+            b3_count += 1
         
         # store the accuracy scores for later
         if i % accuracy_update == 0:
@@ -259,29 +273,22 @@ for interAtor in range(10):
     save_local_graphs = './Results/Graphs/'
 
     plt.plot(rewards0)
+    plt.plot(rewards1)
+    plt.plot(rewards2)
+    plt.plot(rewards3)
+    plt.title(label="Rewards")
+    plt.legend(['Bandit 1', 'Bandit 2', 'Bandit 3', 'Bandit 4'], loc='upper left')
     plt.savefig(save_local_graphs + str(testnum)+'bandit0_reward_.png')
     plt.clf()
     with open(save_local + str(testnum)+'bandit0_reward_.txt', 'w') as f:
         for item in rewards0:
             f.write("%s\n" % item)
-
-    plt.plot(rewards1)
-    plt.savefig(save_local_graphs + str(testnum)+'bandit1_reward_.png')
-    plt.clf()
     with open(save_local + str(testnum)+'bandit1_reward_.txt', 'w') as f:
         for item in rewards1:
             f.write("%s\n" % item)
-
-    plt.plot(rewards2)
-    plt.savefig(save_local_graphs + str(testnum)+'bandit2_reward_.png')
-    plt.clf()
     with open(save_local + str(testnum)+'bandit2_reward_.txt', 'w') as f:
         for item in rewards2:
             f.write("%s\n" % item)
-
-    plt.plot(rewards3)
-    plt.savefig(save_local_graphs + str(testnum)+'bandit3_reward_.png')
-    plt.clf()
     with open(save_local + str(testnum)+'bandit3_reward_.txt', 'w') as f:
         for item in rewards3:
             f.write("%s\n" % item)
