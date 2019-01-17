@@ -118,15 +118,15 @@ for interAtor in range(10):
         Sgate(S2) | q[2]
         Sgate(S3) | q[3]
         # Displacement Gates
-        #Dgate(D0) | q[0]
-        #Dgate(D1) | q[1]
-        #Dgate(D2) | q[2]
-        #Dgate(D3) | q[3]
+        Dgate(D0) | q[0]
+        Dgate(D1) | q[1]
+        Dgate(D2) | q[2]
+        Dgate(D3) | q[3]
         # Phase Gates
-        Pgate(P0) | q[0]
-        Pgate(P1) | q[1]
-        Pgate(P2) | q[2]
-        Pgate(P3) | q[3]
+        #Pgate(P0) | q[0]
+        #Pgate(P1) | q[1]
+        #Pgate(P2) | q[2]
+        #Pgate(P3) | q[3]
         # Cubic phase gates
         Vgate(V0) | q[0]
         Vgate(V1) | q[1]
