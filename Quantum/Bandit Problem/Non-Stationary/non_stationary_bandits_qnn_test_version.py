@@ -118,10 +118,10 @@ for interAtor in range(10):
         Sgate(S2) | q[2]
         Sgate(S3) | q[3]
         # Displacement Gates
-        Dgate(D0) | q[0]
-        Dgate(D1) | q[1]
-        Dgate(D2) | q[2]
-        Dgate(D3) | q[3]
+        #Dgate(D0) | q[0]
+        #Dgate(D1) | q[1]
+        #Dgate(D2) | q[2]
+        #Dgate(D3) | q[3]
         # Phase Gates
         #Pgate(P0) | q[0]
         #Pgate(P1) | q[1]
@@ -162,12 +162,31 @@ for interAtor in range(10):
     num_bandits = len(reward_distribution)                              # The number of bandits must be same as reward distribution
     weights = circuit_output                                            # Weights are calculated by the quantum neural network
     chosen_action = tf.argmax(weights)                                  # Choose an action, based on the weights
-    total_episodes = 20000                                              # Number of iterations
+    total_episodes = 50000                                              # Number of iterations
+    learning_rate = 0.001                                               # learning rate of the GD algorithm
     swap_dist_test = int(total_episodes/6)                              # partway through learning, swap two distributions and examine the change
     total_reward = np.zeros(num_bandits)                                # Total rewards for each of the bandits
     random_action_factor = 0.10                                         # The % of the time we randomly choose an action, not based on weights
     accuracy_update = 50                                                # every 100 iterations, reccord the accuracy for past 100 iterations
     print_update = 200                                                  # every 200 iterations, output to the user
+    save_local = './Results/'
+    save_local_graphs = './Results/Graphs/'
+
+    # this is for the parameter printout to a file for analysis
+    qnn_parameters = [
+        "Reward Distribution: {0}".format(reward_distribution_original), 
+        "Number of Bandits: {0}".format(num_bandits), 
+        "Total Iterations per Test: {0}".format(total_episodes), 
+        "Learning Rate: {0}".format(learning_rate), 
+        "Swap Distribution Iteration: {0}".format(swap_dist_test), 
+        "Random Choice Factor: {0}".format(random_action_factor), 
+        "Update Accuracy Score: {0}".format(accuracy_update), 
+        "Print Update to User: {0}".format(print_update)
+    ]
+    # print out the parameters
+    with open(save_local + 'PARAMETERS.txt', 'w') as f:
+        for item in qnn_parameters:
+            f.write("%s\n" % item)
 
     print("Setting up the Network...")
     print("Reward holder")
@@ -178,7 +197,7 @@ for interAtor in range(10):
     responsible_weight = tf.slice(weights,action_holder,[1])
     print("Loss Function")
     loss = -(tf.log(responsible_weight)*reward_holder)
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
     update = optimizer.minimize(loss)
 
     init = tf.initialize_all_variables()
@@ -189,10 +208,7 @@ for interAtor in range(10):
     rewards3 = []
     accuracy = []
     accuracy_scores = []
-    b0_count = 0
-    b1_count = 0
-    b2_count = 0
-    b3_count = 0
+    bandit_counts = [0,0,0,0]
     sess = tf.Session()
     sess.run(init)
     temp_action = 0 # In order to generate the weights from the QNN for the first iteration, this has to be set
@@ -216,19 +232,19 @@ for interAtor in range(10):
             accuracy.append(0)
         # reccord individual guesses for each bandit
         if best_guess == 0:
-            b0_count += 1
+            bandit_counts[0] += 1
         if best_guess == 1:
-            b1_count += 1
+            bandit_counts[1] += 1
         if best_guess == 2:
-            b2_count += 1
+            bandit_counts[2] += 1
         if best_guess == 3:
-            b3_count += 1
+            bandit_counts[3] += 1
         
         # store the accuracy scores for later
         if i % accuracy_update == 0:
             accuracy_scores.append((sum(accuracy) / len(accuracy)))
             # reset accuracy count, so average is only every 50 counts
-            accuracy = []
+            # accuracy = []
         
         # when the network is 1part way through training, shuffle the reward distribution
         if i == swap_dist_test:
@@ -244,7 +260,7 @@ for interAtor in range(10):
             print("---------------------------------------------------------------------------------------------")
             print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
             print("Iteration: {0} Accuracy: {1}".format(i, round((sum(accuracy_scores)/len(accuracy_scores)), 4)))
-            print("Bandit Counts: | {0} | {1} | {2} | {3} |".format(b0_count, b1_count, b2_count, b3_count))
+            print("Bandit Counts: | {0} | {1} | {2} | {3} |".format(bandit_counts[0], bandit_counts[1], bandit_counts[2], bandit_counts[3]))
             print("Weights: {0}".format(ww))
 
         # reccord the results of the accuracy, for analysis later
@@ -256,12 +272,13 @@ for interAtor in range(10):
         temp_action = action
 
     # calculate the percentage of guesses made by the neural network
-    b0_percent = round(b0_count / total_episodes, 4)
-    b1_percent = round(b1_count / total_episodes, 4)
-    b2_percent = round(b2_count / total_episodes, 4)
-    b3_percent = round(b3_count / total_episodes, 4)
+    b0_percent = round(bandit_counts[0] / total_episodes, 4)
+    b1_percent = round(bandit_counts[1] / total_episodes, 4)
+    b2_percent = round(bandit_counts[2] / total_episodes, 4)
+    b3_percent = round(bandit_counts[3] / total_episodes, 4)
     # print the overall accuracy and make a prediction
     print("Accuracy for this network: {0}".format(np.mean(accuracy_scores)))
+    print("Final Weights: {0}".format(ww))
     print("Percentage of guesses during learning:")
     print("Bandit 1:{0} Bandit 2:{1} Bandit 3:{2} Bandit 4:{3}".format(b0_percent, b1_percent, b2_percent, b3_percent))
     print("The agent thinks bandit " + str(np.argmax(ww)+1) + " is the most promising....")
@@ -273,16 +290,13 @@ for interAtor in range(10):
     # reset the distribution for the network for more accurate readings
     reward_distribution = []
     reward_distribution = copy.deepcopy(reward_distribution_original)
-    b0_count = 0
-    b1_count = 0
-    b2_count = 0
-    b3_count = 0
+    bandit_counts[0] = 0
+    bandit_counts[1] = 0
+    bandit_counts[2] = 0
+    bandit_counts[3] = 0
     
     # graph the rewards over time, so we can see the stochastic learning
     # and also record the data, for use later in data analysis tools
-
-    save_local = './Results/'
-    save_local_graphs = './Results/Graphs/'
 
     plt.plot(rewards0)
     plt.plot(rewards1)
