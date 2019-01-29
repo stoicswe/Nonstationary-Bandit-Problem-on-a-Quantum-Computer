@@ -57,7 +57,6 @@ num_bandits = len(reward_distribution)                                      # Th
 total_episodes = 50000                                                      # Number of iterations
 learning_rate = 0.01                                                        # learning rate of the GD algorithm
 swap_dist_test = int(total_episodes/10)                                     # partway through learning, swap two distributions and examine the change
-total_reward = np.zeros(num_bandits)                                        # Total rewards for each of the bandits
 random_action_factor = 0.10                                                 # The % of the time we randomly choose an action, not based on weights
 accuracy_update = 50                                                        # every 100 iterations, reccord the accuracy for past 100 iterations
 print_update = 200                                                          # every 200 iterations, output to the user
@@ -188,8 +187,13 @@ for interAtor in range(10):
         # fluctuating the reward more (causing it to be more random, and to have a larger range)
         new_reward_distribution = reward_distribution + np.random.normal(loc=0.0, scale=0.1*testnum, size=k)
         optimal = np.argmax(new_reward_distribution)
-        #return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
-        return new_reward_distribution[action], optimal, new_reward_distribution
+        return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
+        #return new_reward_distribution[action], optimal, new_reward_distribution
+    
+    # additional parameters that need to be reset every time the algorithm is run
+    total_reward = np.zeros(num_bandits)                                        # Total rewards for each of the bandits
+    weights = circuit_output                                                    # Weights are calculated by the quantum neural network
+    chosen_action = tf.argmax(weights)                                          # Choose an action, based on the weights
 
     print("Setting up the Network...")
     print("Reward holder")
@@ -202,9 +206,6 @@ for interAtor in range(10):
     loss = -(tf.log(responsible_weight)*reward_holder)
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
     update = optimizer.minimize(loss)
-
-    weights = circuit_output                                                    # Weights are calculated by the quantum neural network
-    chosen_action = tf.argmax(weights)                                          # Choose an action, based on the weights
 
     init = tf.initialize_all_variables()
     # These lists are stored for graphing the rewards over time for each bandit
@@ -250,7 +251,7 @@ for interAtor in range(10):
         if i % accuracy_update == 0:
             accuracy_scores.append((sum(accuracy) / len(accuracy)))
             # reset accuracy count, so average is only every 50 counts
-            accuracy = []
+            #accuracy = []
         
         # when the network is 1part way through training, shuffle the reward distribution
         if i == swap_dist_test:
