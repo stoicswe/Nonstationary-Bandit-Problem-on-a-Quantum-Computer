@@ -48,6 +48,40 @@ warnings.filterwarnings("ignore")
 # machine. You may want to either sleep or take a long coffee break
 # while this program is running.
 
+# Parameters for the project configuration
+reward_distribution_original = [0.0, 0.5, 0.3, 0.2]                         # These numbers are chosen to give the arms contrast, but also to assist kin debugging.
+reward_distribution = copy.deepcopy(reward_distribution_original)           # This is the reward distribution for the bandits
+reward_distribution_shuffled = copy.deepcopy(reward_distribution_original)  # Copy the original distribution again for a shuffled version
+rand.shuffle(reward_distribution_shuffled)                                  # Shuffle the shuffled version for learning later
+num_bandits = len(reward_distribution)                                      # The number of bandits must be same as reward distribution
+total_episodes = 50000                                                      # Number of iterations
+learning_rate = 0.01                                                        # learning rate of the GD algorithm
+swap_dist_test = int(total_episodes/10)                                     # partway through learning, swap two distributions and examine the change
+total_reward = np.zeros(num_bandits)                                        # Total rewards for each of the bandits
+random_action_factor = 0.10                                                 # The % of the time we randomly choose an action, not based on weights
+accuracy_update = 50                                                        # every 100 iterations, reccord the accuracy for past 100 iterations
+print_update = 200                                                          # every 200 iterations, output to the user
+    
+save_local = './Results/'
+save_local_graphs = './Results/Graphs/'
+
+# this is for the parameter printout to a file for analysis
+qnn_parameters = [
+    "Reward Distribution: {0}".format(reward_distribution_original), 
+    "Shuffled Reward Distribution: {0}".format(reward_distribution_shuffled),
+    "Number of Bandits: {0}".format(num_bandits), 
+    "Total Iterations per Test: {0}".format(total_episodes), 
+    "Learning Rate: {0}".format(learning_rate), 
+    "Swap Distribution Iteration: {0}".format(swap_dist_test), 
+    "Random Choice Factor: {0}".format(random_action_factor), 
+    "Update Accuracy Score: {0}".format(accuracy_update), 
+    "Print Update to User: {0}".format(print_update)
+]
+# print out the parameters
+with open(save_local + 'PARAMETERS.txt', 'w') as f:
+    for item in qnn_parameters:
+        f.write("%s\n" % item)
+
 for interAtor in range(10):
     testnum = interAtor * 10
     print("Initializing Variables for the Quantum Neural Network")
@@ -154,43 +188,8 @@ for interAtor in range(10):
         # fluctuating the reward more (causing it to be more random, and to have a larger range)
         new_reward_distribution = reward_distribution + np.random.normal(loc=0.0, scale=0.1*testnum, size=k)
         optimal = np.argmax(new_reward_distribution)
-        return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
-
-    # Parameters for the project configuration
-    reward_distribution_original = [0.0, 0.5, 0.3, 0.2]                         # These numbers are chosen to give the arms contrast, but also to assist kin debugging.
-    reward_distribution = copy.deepcopy(reward_distribution_original)           # This is the reward distribution for the bandits
-    reward_distribution_shuffled = copy.deepcopy(reward_distribution_original)  # Copy the original distribution again for a shuffled version
-    rand.shuffle(reward_distribution_shuffled)                                  # Shuffle the shuffled version for learning later
-    num_bandits = len(reward_distribution)                                      # The number of bandits must be same as reward distribution
-    weights = circuit_output                                                    # Weights are calculated by the quantum neural network
-    chosen_action = tf.argmax(weights)                                          # Choose an action, based on the weights
-    total_episodes = 50000                                                      # Number of iterations
-    learning_rate = 0.01                                                        # learning rate of the GD algorithm
-    swap_dist_test = int(total_episodes/20)                                     # partway through learning, swap two distributions and examine the change
-    total_reward = np.zeros(num_bandits)                                        # Total rewards for each of the bandits
-    random_action_factor = 0.10                                                 # The % of the time we randomly choose an action, not based on weights
-    accuracy_update = 50                                                        # every 100 iterations, reccord the accuracy for past 100 iterations
-    print_update = 200                                                          # every 200 iterations, output to the user
-    
-    save_local = './Results/'
-    save_local_graphs = './Results/Graphs/'
-
-    # this is for the parameter printout to a file for analysis
-    qnn_parameters = [
-        "Reward Distribution: {0}".format(reward_distribution_original), 
-        "Shuffled Reward Distribution: {0}".format(reward_distribution_shuffled),
-        "Number of Bandits: {0}".format(num_bandits), 
-        "Total Iterations per Test: {0}".format(total_episodes), 
-        "Learning Rate: {0}".format(learning_rate), 
-        "Swap Distribution Iteration: {0}".format(swap_dist_test), 
-        "Random Choice Factor: {0}".format(random_action_factor), 
-        "Update Accuracy Score: {0}".format(accuracy_update), 
-        "Print Update to User: {0}".format(print_update)
-    ]
-    # print out the parameters
-    with open(save_local + 'PARAMETERS.txt', 'w') as f:
-        for item in qnn_parameters:
-            f.write("%s\n" % item)
+        #return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
+        return new_reward_distribution[action], optimal, new_reward_distribution
 
     print("Setting up the Network...")
     print("Reward holder")
@@ -203,6 +202,9 @@ for interAtor in range(10):
     loss = -(tf.log(responsible_weight)*reward_holder)
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
     update = optimizer.minimize(loss)
+
+    weights = circuit_output                                                    # Weights are calculated by the quantum neural network
+    chosen_action = tf.argmax(weights)                                          # Choose an action, based on the weights
 
     init = tf.initialize_all_variables()
     # These lists are stored for graphing the rewards over time for each bandit
@@ -248,7 +250,7 @@ for interAtor in range(10):
         if i % accuracy_update == 0:
             accuracy_scores.append((sum(accuracy) / len(accuracy)))
             # reset accuracy count, so average is only every 50 counts
-            # accuracy = []
+            accuracy = []
         
         # when the network is 1part way through training, shuffle the reward distribution
         if i == swap_dist_test:
