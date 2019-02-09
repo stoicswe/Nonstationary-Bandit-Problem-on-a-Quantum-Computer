@@ -51,8 +51,9 @@ warnings.filterwarnings("ignore")
 # Parameters for the project configuration
 reward_distribution_original = [0.0, 0.5, 0.3, 0.2]                         # These numbers are chosen to give the arms contrast, but also to assist kin debugging.
 reward_distribution = copy.deepcopy(reward_distribution_original)           # This is the reward distribution for the bandits
-reward_distribution_shuffled = copy.deepcopy(reward_distribution_original)  # Copy the original distribution again for a shuffled version
-rand.shuffle(reward_distribution_shuffled)                                  # Shuffle the shuffled version for learning later
+#reward_distribution_shuffled = copy.deepcopy(reward_distribution_original)  # Copy the original distribution again for a shuffled version
+#rand.shuffle(reward_distribution_shuffled)                                  # Shuffle the shuffled version for learning later
+reward_distribution_shuffled = [0.3, 0.2, 0.0, 0.5]
 num_bandits = len(reward_distribution)                                      # The number of bandits must be same as reward distribution
 total_episodes = 50000                                                      # Number of iterations
 learning_rate = 0.01                                                        # learning rate of the GD algorithm
