@@ -81,11 +81,11 @@ with open(save_local + 'PARAMETERS.txt', 'w') as f:
         f.write("%s\n" % item)
 
 #interator_array = [0,3,6,7,8,9]
-interator_array = [9] # this is to control how much stochastic-ness is applied to the reward
+interator_array = [0,3,6,9] # this is to control how much stochastic-ness is applied to the reward
 
 for interAtor in interator_array:
     for minorIterate in range(10):
-        testnum = interAtor * 10
+        testnum = interAtor #* 10
         print("Initializing Variables for the Quantum Neural Network")
         # Number of QModes/Neurons
         eng, q = sf.Engine(4)
@@ -170,6 +170,7 @@ for interAtor in interator_array:
             # changing the scale values will make it harder or easier depending on the larger the scale
             # by changing the scale gradually, it makes the learning harder by
             # fluctuating the reward more (causing it to be more random, and to have a larger range)
+            print("% Stochasticness: {0}".format(testnum*0.1))
             new_reward_distribution = reward_distribution + np.random.normal(loc=0.0, scale=0.1*testnum, size=k)
             optimal = np.argmax(new_reward_distribution)
             return np.random.normal(loc=new_reward_distribution[action], scale=1), optimal, new_reward_distribution
