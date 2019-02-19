@@ -80,7 +80,8 @@ with open(save_local + 'PARAMETERS.txt', 'w') as f:
     for item in qnn_parameters:
         f.write("%s\n" % item)
 
-interator_array = [0,3,6,7,8,9]
+#interator_array = [0,3,6,7,8,9]
+interator_array = [9] # this is to control how much stochastic-ness is applied to the reward
 
 for interAtor in interator_array:
     for minorIterate in range(10):
@@ -216,14 +217,6 @@ for interAtor in interator_array:
             _, resp, ww = sess.run([update, responsible_weight, weights], feed_dict={X: [action], reward_holder:[reward],action_holder:[action]})
             total_reward[action] += reward
             # reccord individual guesses for each bandit
-            if best_guess == 0:
-                bandit_counts[0] += 1
-            if best_guess == 1:
-                bandit_counts[1] += 1
-            if best_guess == 2:
-                bandit_counts[2] += 1
-            if best_guess == 3:
-                bandit_counts[3] += 1
             
             # when the network is 1part way through training, shuffle the reward distribution
             if i == swap_dist_test:
@@ -237,7 +230,7 @@ for interAtor in interator_array:
                 print("---------------------------------------------------------------------------------------------")
                 print( "Running reward for the " + str(num_bandits) + " bandits: " + str(total_reward))
                 print("Iteration: {0}".format(i))
-                print("Bandit Counts: | {0} | {1} | {2} | {3} |".format(bandit_counts[0], bandit_counts[1], bandit_counts[2], bandit_counts[3]))
+                #print("Bandit Counts: | {0} | {1} | {2} | {3} |".format(bandit_counts[0], bandit_counts[1], bandit_counts[2], bandit_counts[3]))
                 print("Weights: {0}".format(ww))
 
             # reccord the results of the accuracy, for analysis later
