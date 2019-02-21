@@ -114,7 +114,6 @@ for interAtor in interator_array:
         print("Building the Quantum Circuit")
         with eng:
             # initialize the variables to learn
-            # phi o D o U2 o S o U1
             Dgate(X[0], 0.) | q[0]
             Dgate(X[0], 0.) | q[1]
             Dgate(X[0], 0.) | q[2]
